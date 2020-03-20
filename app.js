@@ -1,27 +1,21 @@
 const express = require("express")
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-const app = express()
-
-const userRoutes = require('./api/routes/user')
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
 
-// connect to db
-console.log(process.env.MONGO_URI)
-mongoose
-    .connect(process.env.MONGO_URI, {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-        useCreateIndex: true,
-    })
-    .then(() => console.log('DB Connected!'))
-    .catch(err => {
-        console.log(`DB Connection Error: ${err.message}`);
-    });
+// database
+const sequelize = require('./api/database/db')
 
+// test database
+sequelize.authenticate()
+    .then(() => console.log('Connection has been established successfully'))
+    .catch(err => console.error('Unable to connect to the database: ', err));
+
+const app = express()
+
+// parse incoming data
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -38,8 +32,12 @@ app.use((req, res, next) => {
     next();
 });
 
+
 // Routes which should handle requests
-app.use("/user", userRoutes)
+const userRoutes = require('./api/routes/user_routes')
+app.use("/api", userRoutes)
+
+// test route
 app.use("/", (req, res, next) => {
     res
         .status(200)
