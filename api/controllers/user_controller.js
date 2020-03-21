@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require('dotenv')
 
-const User = require("../models/user");
+// database model
+const User = require("../models/user_model");
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -25,15 +26,17 @@ exports.user_signup = (req, res, next) => {
                     } else {
                         const user = new User({
                             _id: new mongoose.Types.ObjectId(),
+                            username: req.body.username,
                             email: req.body.email,
-                            password: hash
+                            password: hash,
                         });
                         user
                             .save()
                             .then(result => {
                                 console.log(result);
                                 res.status(201).json({
-                                    message: "User created"
+                                    message: "User created",
+                                    data: result,
                                 });
                             })
                             .catch(err => {
@@ -58,8 +61,8 @@ exports.user_login = (req, res, next) => {
                 });
             }
             bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+                console.log("first")
                 if (err) {
-                    console.log("first")
                     return res.status(401).json({
                         message: "Auth failed"
                     });
@@ -71,7 +74,7 @@ exports.user_login = (req, res, next) => {
                             email: user[0].email,
                             userId: user[0]._id
                         },
-                        process.env.JWT_KEY,
+                        process.env.JWT_ENCRYPTION,
                         {
                             expiresIn: "1h"
                         }
@@ -93,3 +96,33 @@ exports.user_login = (req, res, next) => {
             });
         });
 };
+
+exports.users = (req, res, next) => {
+    User.find()
+        .exec()
+        .then(users => {
+            res.status(200).json({
+                data: users
+            })
+        })
+        .catch(err => {
+
+        })
+}
+
+exports.user = (req, res, next) => {
+    console.log(req.params.uuid)
+    User.findById({ profile: { _id: req.params.uuid } })
+        .exec()
+        .then(user => {
+            res.status(200).json({
+                user: user
+            })
+        })
+        .catch(err => {
+            res.status(404).json({
+                err: err
+            })
+        })
+}
+

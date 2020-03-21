@@ -4,15 +4,12 @@ const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const app = express()
 
-const userRoutes = require('./api/routes/user')
-
-// Load env vars
+// LOAD ENV VARIABLE
 dotenv.config({ path: './config/config.env' });
 
-// connect to db
-console.log(process.env.MONGO_URI)
+// CONNECT TO DB
 mongoose
-    .connect(process.env.MONGO_URI, {
+    .connect(process.env.DB_HOST, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
         useCreateIndex: true,
@@ -22,9 +19,11 @@ mongoose
         console.log(`DB Connection Error: ${err.message}`);
     });
 
+// PARSE DATA OF INCOMING REQUEST
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+// CORS ALLOW INCOMING REQUEST
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
@@ -38,8 +37,15 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes which should handle requests
-app.use("/user", userRoutes)
+// IMPORT ROUTES
+const userRoutes = require('./api/routes/user_routes')
+const postRoutes = require('./api/routes/post_routes')
+
+// ROUTES WHICH SHOULD HANDLE REQUEST
+app.use("/api", userRoutes)
+app.use("/api", postRoutes)
+
+// ROUTE FOR TEST THE APP IF WORK WELL OR NOT
 app.use("/", (req, res, next) => {
     res
         .status(200)
