@@ -5,9 +5,33 @@ const dotenv = require('dotenv')
 
 // database model
 const User = require("../models/user_model");
+const Profile = require("../models/profile_model")
+const FriendsRequests = require('../models/friends_request')
+const Friends = require('../models/friends_model')
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
+
+const CreatProfileDoc = async (result) => {
+    try {
+        const profile = new Profile({
+            _id: result._id,
+            username: result.username
+        })
+        const Friends_requests = new FriendsRequests({
+            _id: result._id,
+        })
+        const friends = new Friends({
+            _id: result._id,
+        })
+        await profile.save()
+        await Friends_requests.save()
+        await friends.save()
+        return;
+    } catch (err) {
+        throw new Error(err)
+    }
+}
 
 exports.user_signup = (req, res, next) => {
     User.find({ email: req.body.email })
@@ -33,11 +57,19 @@ exports.user_signup = (req, res, next) => {
                         user
                             .save()
                             .then(result => {
-                                console.log(result);
-                                res.status(201).json({
-                                    message: "User created",
-                                    data: result,
-                                });
+                                CreatProfileDoc(result)
+                                    .then(r => {
+                                        res.status(200).json({
+                                            message: 'user created',
+                                            data: result
+                                        })
+                                    })
+                                    .catch(e => {
+                                        res.status(401).json({
+                                            message: 'creation user failed',
+                                            error: e
+                                        })
+                                    })
                             })
                             .catch(err => {
                                 console.log(err);

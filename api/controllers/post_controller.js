@@ -6,7 +6,10 @@ const Post = require('../models/post_model')
 // HANDLE NEW POST
 exports.post = (req, res, next) => {
     Post.findOne({ uuid: req.params.uuid })
-        .then(post => {
+        .populate('comments.owner_id', 'profile_pic username')
+        .populate('likes.owner_id', 'profile_pic username')
+        .populate('orders.owner_id', 'profile_pic username')
+        .exec((err, post) => {
             if (!post) {
                 const newpost = new Post({
                     uuid: req.params.uuid,
@@ -48,24 +51,25 @@ exports.post = (req, res, next) => {
                     })
             }
         })
-        .catch(err => {
-            res.status(401).json({
-                err: err
-            })
-        })
 }
 
 // GET ALL POSTS IN DATABASE
 exports.getAllPosts = (req, res, next) => {
-    Post.find()
-        .exec()
-        .then(posts => {
+    Post.find({})
+        .populate('uuid', 'profile_pic username')
+        .populate('comments.owner_id', 'profile_pic username')
+        .populate('likes.owner_id', 'profile_pic username')
+        .populate('orders.owner_id', 'profile_pic username')
+        .exec((err, posts) => {
+            if (err) {
+                res.status(401).json({
+                    data: err
+                })
+                return;
+            }
             res.status(200).json({
                 data: posts
             })
-        })
-        .catch(err => {
-
         })
 }
 
@@ -114,7 +118,7 @@ exports.likes = (req, res, next) => {
         })
 }
 
-// STORE  COUNT OF COMMENTS AND OTHER INFO LIKE THE OWNER OF THIS COMMENT
+// // STORE  COUNT OF COMMENTS AND OTHER INFO LIKE THE OWNER OF THIS COMMENT
 exports.comments = (req, res, next) => {
     const post_id = req.params.post_id
 
@@ -143,7 +147,7 @@ exports.comments = (req, res, next) => {
         })
 }
 
-// STORE COUNT OF ORDER FOR A BOOK AND OTHER INFO LIKE THE OWNER OF THIS ORDER
+// // STORE COUNT OF ORDER FOR A BOOK AND OTHER INFO LIKE THE OWNER OF THIS ORDER
 exports.orders = (req, res, next) => {
     const post_id = req.params.post_id
 
@@ -171,3 +175,9 @@ exports.orders = (req, res, next) => {
             }
         })
 }
+
+
+exports.getNotifications = (req, res, next) => {
+
+}
+

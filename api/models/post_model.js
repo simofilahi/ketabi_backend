@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 
 const postsSchema = mongoose.Schema({
-    uuid: { type: Object },
-    _id: mongoose.Schema.Types.ObjectId,
+    uuid: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     title: { type: String },
     description: { type: String },
     img: { type: String },
@@ -11,18 +10,18 @@ const postsSchema = mongoose.Schema({
     ordersCount: { type: Number, default: 0 },
     comments: [
         {
-            owner_id: { type: Object },
+            owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
             text: { type: String },
         }
     ],
     likes: [
         {
-            owner_id: { type: Object }
+            owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         }
     ],
     orders: [
         {
-            owner_id: { type: Object },
+            owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
             book_name: { type: String },
         }
     ],

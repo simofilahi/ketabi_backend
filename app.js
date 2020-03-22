@@ -1,4 +1,5 @@
 const express = require("express")
+const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const dotenv = require('dotenv')
 const app = express()
@@ -39,10 +40,14 @@ app.use((req, res, next) => {
 // IMPORT ROUTES
 const userRoutes = require('./api/routes/user_routes')
 const postRoutes = require('./api/routes/post_routes')
+const profileRoutes = require('./api/routes/profile_routes')
+const friendsRoutes = require('./api/routes/friends_routes')
 
 // ROUTES WHICH SHOULD HANDLE REQUEST
 app.use("/api", userRoutes)
 app.use("/api", postRoutes)
+app.use("/api", profileRoutes)
+app.use("/api", friendsRoutes)
 
 // ROUTE FOR TEST THE APP IF WORK WELL OR NOT
 app.use("/", (req, res, next) => {

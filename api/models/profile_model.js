@@ -1,21 +1,13 @@
-const Sequelize = require('sequelize')
-const user = require('./user_model')
+const mongoose = require('mongoose')
 
-// database
-const sequelize = require('../database/db')
-
-const profile = sequelize.define({
-    date_birthday: {
-        type: Sequelize.DATE
-    }
+const profileSchema = mongoose.Schema({
+    _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    username: { type: String, ref: 'User' },
+    phone_number: { type: Number },
+    location: { type: String, default: "None" },
+    description: { type: String, default: "None" },
+    interests: { type: String, default: "None" },
+    profile_pic: { type: String, default: "default.png" },
 })
 
-user.hasOne(profile, {
-    foreignkey: 'user_id'
-})
-
-profile.belongTo(user, {
-    foreignkey: 'user_id'
-})
-
-module.exports = profile
+module.exports = mongoose.model("Profile", profileSchema);
