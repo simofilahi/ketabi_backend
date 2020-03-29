@@ -11,8 +11,8 @@ router.post('/post/comment/:post_id', PostController.comments)
 router.post('/post/order/:post_id', PostController.orders)
 
 router.get('/posts', PostController.getAllPosts)
-router.get('/posts/:uuid', PostController.getPostByUuid)
-router.get('/notifications/:uuid', PostController.getNotifications)
+router.get('/posts/:uuid', PostController.getPostsByUuid)
+// router.get('/notifications/:uuid', PostController.getNotifications)
 
 // Profile routes
 module.exports = router

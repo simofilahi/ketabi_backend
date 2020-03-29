@@ -113,7 +113,8 @@ exports.user_login = (req, res, next) => {
                     );
                     return res.status(200).json({
                         message: "Auth successful",
-                        token: token
+                        token: token,
+                        uuid: user[0]._id
                     });
                 }
                 res.status(401).json({
@@ -158,3 +159,24 @@ exports.user = (req, res, next) => {
         })
 }
 
+
+exports.ProfileSettings = async (req, res, next) => {
+    try {
+        const settings = await User.findOne({ _id: uuid })
+        if (settings) {
+            res.status(200).json({
+                message: 'profile settings',
+                data: settings
+            })
+            return;
+        }
+        res.status(401).json({
+            message: 'profile not found',
+        })
+    } catch (err) {
+        res.status(401).json({
+            message: 'profile settings failed',
+            err: new Error(err)
+        })
+    }
+}

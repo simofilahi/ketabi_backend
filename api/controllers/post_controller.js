@@ -74,7 +74,7 @@ exports.getAllPosts = (req, res, next) => {
 }
 
 // GET POSTS OF USER BY UUID
-exports.getPostByUuid = (req, res, next) => {
+exports.getPostsByUuid = (req, res, next) => {
     Post.find({ uuid: req.params.uuid }, (err, post) => {
         if (err) {
             res.status(401).json({
@@ -124,8 +124,10 @@ exports.comments = (req, res, next) => {
 
     const newComment = {
         owner_id: req.body.owner_id,
-        text: req.body.comment
+        comment: req.body.comment
     }
+    console.log(newComment)
+    console.log(post_id)
     Post.update(
         { _id: post_id },
         {
@@ -177,7 +179,7 @@ exports.orders = (req, res, next) => {
 }
 
 
-exports.getNotifications = (req, res, next) => {
+// exports.getNotifications = (req, res, next) => {
 
-}
+// }
 
