@@ -41,8 +41,8 @@ io.on("connection", function(socket) {
         console.log({ data });
 
         // socket.broadcast.emit("newMessage", msg.content);
-        console.log(data.room_id);
-        io.to(data.room_id).emit("newMessage", data);
+        console.log(data.roomId);
+        io.to(data.roomId).emit("newMessage", data);
       })
       .catch(err => {});
   });
